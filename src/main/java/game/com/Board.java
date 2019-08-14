@@ -428,6 +428,8 @@ public class Board extends JPanel implements ComponentListener {
                 if (!player.isGodMode()) player.setInvulnDur(InvalnerableDuration);
                 break;
               }
+              
+              player.getWeapons().remove(c);
             }
           }
         }
