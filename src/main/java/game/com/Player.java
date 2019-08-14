@@ -1,9 +1,10 @@
 package game.com;
 
 import java.awt.Image;
+import java.util.ArrayList;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
-import game.com.util.ResourceUtil;
+import game.com.util.ResourceManager;
 
 public class Player extends Character {
   
@@ -12,6 +13,7 @@ public class Player extends Character {
   private int lives;
   private int invulnDur;
   private int fireDuration = 10;
+  private ArrayList<Weapon> weapons = new ArrayList<>();
   
   private boolean jumping;
   private boolean firing;
@@ -62,19 +64,19 @@ public class Player extends Character {
     
     setSprite(new Image[getFrames()]);
     
-    forwardWalking = ResourceUtil.getImage("mechWalking.gif");
+    forwardWalking = ResourceManager.getImage("mechWalking.gif");
     
     setSpriteImageIndex(0, forwardWalking);
     
-    jumpSprite = ResourceUtil.getImage("mechJump.gif");
-    fireSprite = ResourceUtil.getImage("mechFire.png");
-    reverseWalking = ResourceUtil.getImage("reverseWalking.gif");
+    jumpSprite = ResourceManager.getImage("mechJump.gif");
+    fireSprite = ResourceManager.getImage("mechFire.png");
+    reverseWalking = ResourceManager.getImage("reverseWalking.gif");
     
     clip = AudioSystem.getClip();
-    clip.open(AudioSystem.getAudioInputStream(ResourceUtil.getResourceByName("Jump.wav")));
+    clip.open(AudioSystem.getAudioInputStream(ResourceManager.getResourceByName("Jump.wav")));
     
     gunFireClip = AudioSystem.getClip();
-    gunFireClip.open(AudioSystem.getAudioInputStream(ResourceUtil.getResourceByName("miniGun.wav")));
+    gunFireClip.open(AudioSystem.getAudioInputStream(ResourceManager.getResourceByName("miniGun.wav")));
     
     setCurrentFrame(0);
     
@@ -166,8 +168,19 @@ public class Player extends Character {
   }
 
   public void fire() {
+    
     this.firing = true;
     playFiringSound();
+
+    Weapon weapon = new Weapon();
+    weapon.setX(x + 230);
+    weapon.setY(y + 130);
+    
+    weapons.add(weapon);
+  }
+  
+  public ArrayList<Weapon> getWeapons(){
+    return weapons;
   }
   
   public int getFireDuation() {

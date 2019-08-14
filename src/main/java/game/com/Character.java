@@ -5,11 +5,11 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
-public class Character {
+public class Character implements Collidable{
 
   private int frames = 11;
-  private int x;
-  private int y;
+  protected int x;
+  protected int y;
   private int currentFrame;
   private Image[] sprite;
 
@@ -89,12 +89,14 @@ public class Character {
     return sprite[index];
   }
   
+  @Override
   public Rectangle getBounds() {
     return (new Rectangle(x, y, sprite[currentFrame].getWidth(null),
         sprite[currentFrame].getHeight(null)));
   }
 
-  public BufferedImage getBI() {
+  @Override
+  public BufferedImage getBufferedImage() {
     
     BufferedImage bi = new BufferedImage(sprite[currentFrame].getWidth(null), sprite[currentFrame].getHeight(null), BufferedImage.TYPE_INT_ARGB);
     

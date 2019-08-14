@@ -9,18 +9,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.IOException;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.OverlayLayout;
 import javax.swing.Timer;
-import game.com.util.ResourceUtil;
+import game.com.adapter.ClosingWindowAdapter;
+import game.com.util.ResourceManager;
 
 public class App implements ActionListener, KeyListener {
 
@@ -50,8 +48,10 @@ public class App implements ActionListener, KeyListener {
 
           new App();
         }
-        catch (IOException e) {
+        catch (Exception e) {
+          
           e.printStackTrace();
+          System.exit(1);
         }
 
         mainFrame.setVisible(true);
@@ -59,36 +59,19 @@ public class App implements ActionListener, KeyListener {
     });
   }
 
-  private App() throws IOException {
+  private App() throws Exception {
 
     inGameMode = false;
 
-    try {
-      clip = AudioSystem.getClip();
-      clip.open(AudioSystem.getAudioInputStream(ResourceUtil.getResourceByName("bgm.wav")));
-    }
-    catch (Exception e) {
-      JOptionPane.showMessageDialog(null, "Failed to load background music: " + e, "Error",
-          JOptionPane.ERROR_MESSAGE);
-    }
+    clip = AudioSystem.getClip();
+    clip.open(AudioSystem.getAudioInputStream(ResourceManager.getResourceByName("bgm.wav")));
+
     mainFrame = new JFrame("A Java Game");
-    mainFrame.setMinimumSize(ResourceUtil.getFractionalScreenDimension(4, 4));
+    mainFrame.setMinimumSize(ResourceManager.getFractionalScreenDimension(4, 4));
     mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
     mainFrame.setResizable(true);
     mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-    mainFrame.addWindowListener(new WindowAdapter() {
-      @Override
-      public void windowClosing(WindowEvent e) {
-        super.windowClosing(e);
-        if (board != null && board.getTimer().isRunning()) board.getTimer().stop();
-        if (JOptionPane.showConfirmDialog(null, "Are you sure you want to exit game?", "Notice",
-            JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-          System.exit(0);
-        }
-        if (board != null && !board.getTimer().isRunning()) board.getTimer().start();
-      }
-    });
-
+    mainFrame.addWindowListener(new ClosingWindowAdapter(board));
     mainFrame.setAlwaysOnTop(false);
     mainFrame.addKeyListener(this);
 

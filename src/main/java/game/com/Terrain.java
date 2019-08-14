@@ -2,7 +2,7 @@ package game.com;
 
 import java.awt.Image;
 import java.io.IOException;
-import game.com.util.ResourceUtil;
+import game.com.util.ResourceManager;
 
 public class Terrain {
   
@@ -17,7 +17,7 @@ public class Terrain {
     this.initX = 0;
     this.pace = pace;
     
-    sprite = ResourceUtil.getImage(resourceName);
+    sprite = ResourceManager.getImage(resourceName);
 
     w = sprite.getWidth(null);
     h = sprite.getHeight(null);

@@ -1,12 +1,15 @@
 package game.com;
 
 import java.awt.Image;
+import java.util.logging.Logger;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
-import game.com.util.ResourceUtil;
+import game.com.util.ResourceManager;
 
 public class Enemy extends Character {
 
+  private Logger logger = Logger.getLogger(Enemy.class.getName());
+  
   private int speed;
   private Clip damageClip;
   private Image image;
@@ -16,29 +19,35 @@ public class Enemy extends Character {
 
   public Enemy(int x, int y, int speed) {
     
+    loadResources();
+    
     setX(x);
     setY(y);
     setFrames(1);
     this.speed = speed;
-
-    this.image = ResourceUtil.getImage("smallZombieLeft.gif");
-    this.explodeImage = ResourceUtil.getImage("explode.gif");
     
     setSprite(new Image[getFrames()]);
     setSpriteImageIndex(0, image);
     setCurrentFrame(0);
-
+  }
+  
+  public void loadResources() {
+    
     try {
       
-      damageClip = AudioSystem.getClip();
-      damageClip.open(AudioSystem.getAudioInputStream(ResourceUtil.getResourceByName("explode.wav")));
-    }
-    catch (Exception e) {
+      image = ResourceManager.getImage("smallZombieLeft.gif");
+      explodeImage = ResourceManager.getImage("explode.gif");
       
-      System.out.println("Failure playing damage sound : " + e.getMessage());
+      damageClip = AudioSystem.getClip();
+      damageClip.open(AudioSystem.getAudioInputStream(ResourceManager.getResourceByName("explode.wav")));
+    }
+    catch(Exception e) {
+      
+      logger.severe("Failure loading enemy sound : " + e.getMessage());
+      System.exit(1);
     }
   }
-
+  
   public Image getCurrentSpriteImage() {
     return image;
   }

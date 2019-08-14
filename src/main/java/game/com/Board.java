@@ -19,34 +19,34 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
-import game.com.util.ResourceUtil;
+import game.com.util.ResourceManager;
 
 @SuppressWarnings("serial")
 public class Board extends JPanel implements ComponentListener {
 
   private Timer timer;
   private Random random;
-  
+
   private final int enemySpawnInterval = 35;
   private final int InvalnerableDuration = 30;
-  
+
   private boolean playingGame;
   private int frameWidth;
   private int frameHeight;
-  
+
   private int LAND_HEIGHT = (int) (0.8 * frameHeight);
   private int WATER_HEIGHT = (int) (0.95 * frameHeight);
   private int MOUNTAIN_HEIGHT = (int) (0.82 * frameWidth);
-  
+
   private int enemySpeed;
   private int numEnemies;
   private int i = 0;
   private int score;
   private int scoreWidth;
-  
+
   private Font scoreFont;
   private FontMetrics metric;
-  
+
   private Terrain cloud, ground, ground2, water, water2, mountain, sun;
   private Player player;
   private ArrayList<Enemy> enemies;
@@ -68,12 +68,12 @@ public class Board extends JPanel implements ComponentListener {
     random = new Random();
     setLayout(null);
     scoreWidth = 0;
-    
+
     enemySpeed = -7;
     numEnemies = 500;
     enemies = new ArrayList<>();
     scoreFont = new Font("Calibri", Font.BOLD, 45);
-    
+
     cloud = new Terrain(-2, "Cloud_1.png");
     cloud.scaleSprite(0.2f);
     ground = new Terrain(-5, "grassMid.png");
@@ -82,19 +82,19 @@ public class Board extends JPanel implements ComponentListener {
     water2 = new Terrain(-15, "liquidWater.png");
     mountain = new Terrain(-1, "Mountains.png");
     sun = new Terrain(0, "screamingSun.gif");
-    
-    life = ResourceUtil.getImage("hud_x.png");
-    
+
+    life = ResourceManager.getImage("hud_x.png");
+
     player = new Player();
     player.setLandYAxis(385);
-    
+
     timer = new Timer(25, new ActionListener() {
-      
+
       @Override
       public void actionPerformed(ActionEvent e) {
-        
+
         if (playingGame) {
-          
+
           cloud.nextPos();
           ground.nextPos();
           ground2.nextPos();
@@ -103,46 +103,59 @@ public class Board extends JPanel implements ComponentListener {
           mountain.nextPos();
           player.nextFrame();
           player.updatePos();
-          
+
           if (i == enemySpawnInterval) {
             spawnEnemies();
             i = -1;
           }
+
+          player
+          .getWeapons()
+          .stream()
+          .forEach(w -> {
+            
+            w.incrementX(30);
+ 
+            //TODO remove when off the map
+            
+          });
           
           iter = enemies.iterator();
           while (iter.hasNext()) {
-            
+
             Enemy enemy = iter.next();
+            
             if (enemy.getX() < -150) {
-              enemies.remove(enemy);            
+              
+              enemies.remove(enemy);
               break;
             }
-            
+
             enemy.nextFrame();
             enemy.updatePos();
           }
-          
+
           player.checkInvulnerability();
           player.checkFiringDuration();
         }
-        
+
         checkCollisions();
         repaint();
         i++;
       }
     });
-    
+
     timer.start();
     playingGame = true;
   }
 
   @Override
   public void paintComponent(Graphics g) {
-    
+
     super.paintComponent(g);
 
     if (playingGame) {
-      
+
       drawSky(g);
       drawSun(g);
       drawCloud(g);
@@ -151,10 +164,11 @@ public class Board extends JPanel implements ComponentListener {
       drawWater(g);
       drawPlayer(g);
       drawEnemies(g);
+      drawWeapons(g);
       drawHUD(g);
     }
     else {
-      
+
       gameOver(g);
     }
   }
@@ -179,13 +193,17 @@ public class Board extends JPanel implements ComponentListener {
   }
 
   private void drawLand(Graphics g) {
+    
     for (int y = LAND_HEIGHT; y < frameHeight; y += ground.getH()) {
+      
       if (y == LAND_HEIGHT) {
+        
         for (int x = ground.getInitX(); x < frameWidth; x += ground.getW()) {
           g.drawImage(ground.getSprite(), x, y, null);
         }
       }
       else {
+        
         for (int x = ground.getInitX(); x < frameWidth; x += ground2.getW()) {
           g.drawImage(ground2.getSprite(), x, y, null);
         }
@@ -194,14 +212,16 @@ public class Board extends JPanel implements ComponentListener {
   }
 
   private void drawWater(Graphics g) {
-    
+
     for (int y = WATER_HEIGHT; y < frameHeight; y += water.getH()) {
-      
+
       if (y == WATER_HEIGHT) {
+        
         for (int x = water.getInitX(); x < frameWidth; x += water.getW())
           g.drawImage(water.getSprite(), x, y, null);
       }
       else {
+        
         for (int x = water.getInitX(); x < frameWidth; x += water2.getW())
           g.drawImage(water2.getSprite(), x, y, null);
       }
@@ -209,13 +229,28 @@ public class Board extends JPanel implements ComponentListener {
   }
 
   private void drawPlayer(Graphics g) {
-    if (player.isGodMode() && player.getInvulnDur() % 2 == 0) return;
+    
+    if (player.isGodMode() && player.getInvulnDur() % 2 == 0) 
+      return;
+    
     g.drawImage(player.getCurrentSpriteImage(), player.getX(), player.getY(), this);
   }
 
-  private void drawEnemies(Graphics g) {
+  private void drawWeapons(Graphics g) {
     
+    player
+    .getWeapons()
+    .stream()
+    .forEach(w -> {
+      
+      g.drawImage(w.getImage(), w.getX(), w.getY(), null);
+    });
+  }
+  
+  private void drawEnemies(Graphics g) {
+
     iter = enemies.iterator();
+    
     while (iter.hasNext()) {
       Enemy tmp = iter.next();
       g.drawImage(tmp.getCurrentSpriteImage(), tmp.getX(), tmp.getY(), null);
@@ -226,7 +261,7 @@ public class Board extends JPanel implements ComponentListener {
 
     g.setColor(Color.WHITE);
     g.setFont(scoreFont);
-    
+
     metric = g.getFontMetrics(scoreFont);
     scoreWidth = metric.stringWidth(String.format("%d", score));
     g.drawString(String.format("%d", score), frameWidth - 80, 55);
@@ -245,11 +280,10 @@ public class Board extends JPanel implements ComponentListener {
   }
 
   private void gameOver(Graphics g) {
-    
+
     g.setColor(Color.WHITE);
     g.fillRect(0, 0, frameWidth, frameHeight);
-    Image gameOver =
-        new ImageIcon(this.getClass().getResource("Logo.png")).getImage();
+    Image gameOver = new ImageIcon(this.getClass().getResource("Logo.png")).getImage();
     g.drawImage(gameOver, (frameWidth / 2) - (gameOver.getWidth(null) / 2),
         (frameHeight / 2) - (gameOver.getHeight(null) / 2), null);
     Font largeScoreFont = new Font("Calibri", Font.BOLD, 100);
@@ -268,17 +302,17 @@ public class Board extends JPanel implements ComponentListener {
 
   @Override
   public void componentResized(ComponentEvent e) {
-    
+
     timer.stop();
     frameHeight = getHeight();
     frameWidth = getWidth();
-    
+
     LAND_HEIGHT = (int) (0.85 * frameHeight);
     WATER_HEIGHT = (int) (0.92 * frameHeight);
     MOUNTAIN_HEIGHT = (LAND_HEIGHT - 500);
 
     enemies.iterator().forEachRemaining(enemy -> enemy.setY(LAND_HEIGHT - 81 + 5));
-    
+
     timer.start();
   }
 
@@ -293,9 +327,11 @@ public class Board extends JPanel implements ComponentListener {
 
 
   public void keyPressed(KeyEvent e) throws Exception {
+    
     int key = e.getKeyCode();
 
     if (key == KeyEvent.VK_UP) {
+      
       if (playingGame)
         player.jump(true);
       else
@@ -308,11 +344,12 @@ public class Board extends JPanel implements ComponentListener {
     else if (key == KeyEvent.VK_SPACE) {
       player.fire();
     }
-    else if (key == KeyEvent.VK_RIGHT) {{
-      
-      player.setBackPeddling(false);
-      player.setDx(9);
-    }
+    else if (key == KeyEvent.VK_RIGHT) {
+      {
+
+        player.setBackPeddling(false);
+        player.setDx(9);
+      }
     }
     else if (key == KeyEvent.VK_ESCAPE) {
 
@@ -324,21 +361,20 @@ public class Board extends JPanel implements ComponentListener {
   }
 
   public void keyReleased(KeyEvent e) throws Exception {
-    
+
     if (e.getKeyCode() == KeyEvent.VK_UP)
       player.jump(false);
     else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
       player.setBackPeddling(false);
       player.setDx(0);
     }
-    else if (e.getKeyCode() == KeyEvent.VK_RIGHT) 
-      player.setDx(0);
+    else if (e.getKeyCode() == KeyEvent.VK_RIGHT) player.setDx(0);
   }
 
   private void spawnEnemies() {
-    
+
     if (enemies.size() < numEnemies) {
-      
+
       if (genEnemyChance() > 7) {
         Enemy enemy = new Enemy(frameWidth + 150, LAND_HEIGHT - 100 + 5, enemySpeed);
         enemies.add(enemy);
@@ -355,50 +391,58 @@ public class Board extends JPanel implements ComponentListener {
   }
 
   private void collisionHelper(Player player, Enemy enemy) {
-
-    Rectangle r1 = player.getBounds();
+    
+    ArrayList<Collidable> collidables = new ArrayList<Collidable>();
+    collidables.add(player);
+    
+    player.getWeapons().stream().forEach(w -> collidables.add(w));
+    
     Rectangle r2 = enemy.getBounds();
+    BufferedImage b2 = enemy.getBufferedImage();
 
-    BufferedImage b1 = player.getBI();
-    BufferedImage b2 = enemy.getBI();
-
-    if (r1.intersects(r2)) {
-
-      Rectangle r = r1.intersection(r2);
-
-      int firstI = (int) (r.getMinX() - r1.getMinX());
-      int firstJ = (int) (r.getMinY() - r1.getMinY());
-      int bp1XHelper = (int) (r1.getMinX() - r2.getMinX());
-      int bp1YHelper = (int) (r1.getMinY() - r2.getMinY());
-
-      for (int i = firstI; i < r.getWidth() + firstI; i++) { //
-
-        for (int j = firstJ; j < r.getHeight() + firstJ; j++) {
-
-          if ((b1.getRGB(i, j) & 0xFF000000) != 0x00
-              && (b2.getRGB(i + bp1XHelper, j + bp1YHelper) & 0xFF000000) != 0x00) {
-
-            enemy.die();
-            
-            if(!enemy.isMarkedDead()) {
-              
-              enemy.markDead(true);
-              score++;
-            }
-
-            if (!player.isInvicible()) {
-              
-              player.changeLives(-1);
-              if (!player.isGodMode()) player.setInvulnDur(InvalnerableDuration);
+    collidables.forEach(c -> {
+    
+      Rectangle r1 = c.getBounds();
+      BufferedImage b1 = c.getBufferedImage();
+      
+      if (r1.intersects(r2)) {
+  
+        Rectangle r = r1.intersection(r2);
+  
+        int firstI = (int) (r.getMinX() - r1.getMinX());
+        int firstJ = (int) (r.getMinY() - r1.getMinY());
+        int bp1XHelper = (int) (r1.getMinX() - r2.getMinX());
+        int bp1YHelper = (int) (r1.getMinY() - r2.getMinY());
+  
+        for (int i = firstI; i < r.getWidth() + firstI; i++) {
+          for (int j = firstJ; j < r.getHeight() + firstJ; j++) {
+  
+            if ((b1.getRGB(i, j) & 0xFF000000) != 0x00 && (b2.getRGB(i + bp1XHelper, j + bp1YHelper) & 0xFF000000) != 0x00) {
+  
+              enemy.die();
+  
+              if (!enemy.isMarkedDead()) {
+  
+                enemy.markDead(true);
+                score++;
+              }
+  
+              if (!player.isInvicible()) {
+  
+                player.changeLives(-1);
+                if (!player.isGodMode()) player.setInvulnDur(InvalnerableDuration);
                 break;
+              }
             }
           }
         }
       }
-    }
+    });
   }
 
   public void restartGame() {
+    
+    
     player.setX((int) (0.15 * frameWidth));
     player.setLives(3);
     enemies.clear();

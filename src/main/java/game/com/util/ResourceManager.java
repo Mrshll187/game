@@ -12,12 +12,12 @@ import java.util.Map;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 
-public class ResourceUtil {
+public class ResourceManager {
 
   private static Map<String, File> fileCache = new HashMap<String, File>();
   private static Map<String, Image> imageCache = new HashMap<String, Image>();
   
-  private static Logger logger = Logger.getLogger(ResourceUtil.class.getName());
+  private static Logger logger = Logger.getLogger(ResourceManager.class.getName());
   
   public static final Number SCREEN_WIDTH = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
   public static final Number SCREEN_HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
@@ -39,7 +39,7 @@ public class ResourceUtil {
     
     try {
       
-      Path base = Paths.get(ResourceUtil.class.getResource("/").getPath());
+      Path base = Paths.get(ResourceManager.class.getResource("/").getPath());
       
       Path path =  Files
       .walk(base)
