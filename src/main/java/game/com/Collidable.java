@@ -8,4 +8,6 @@ public interface Collidable {
   public Rectangle getBounds();
   
   public BufferedImage getBufferedImage();
+  
+  public boolean isDamageable();
 }

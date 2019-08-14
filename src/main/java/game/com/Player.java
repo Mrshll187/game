@@ -34,7 +34,7 @@ public class Player extends Character {
   private boolean invincible;
 
   public Player() throws Exception {
-    this(0, 0);
+    this(0, 0, false);
   }
 
   public void setGodMode() {
@@ -45,17 +45,17 @@ public class Player extends Character {
     return godMode;
   }
   
-  public void setInvicible() {
-    this.invincible = true;
+  public void setInvicible(boolean value) {
+    this.invincible = value;
   }
 
   public boolean isInvicible() {
     return invincible;
   }
 
-  public Player(int x, int y) throws Exception {
+  public Player(int x, int y, boolean invicible) throws Exception {
 
-    setInvicible();
+    setInvicible(invicible);
 
     setFrames(1);
     lives = 3;

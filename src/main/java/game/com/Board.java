@@ -13,7 +13,6 @@ import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Random;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -50,7 +49,6 @@ public class Board extends JPanel implements ComponentListener {
   private Terrain cloud, ground, ground2, water, water2, mountain, sun;
   private Player player;
   private ArrayList<Enemy> enemies;
-  private Iterator<Enemy> iter;
   private Image life;
 
   public Timer getTimer() {
@@ -115,15 +113,17 @@ public class Board extends JPanel implements ComponentListener {
           .forEach(w -> {
             
             w.incrementX(30);
- 
-            //TODO remove when off the map
             
           });
           
-          iter = enemies.iterator();
-          while (iter.hasNext()) {
-
-            Enemy enemy = iter.next();
+          enemies.removeIf(Enemy::isDead);
+          
+          for(Enemy enemy : enemies) {
+            
+            if(enemy.isDead()) {
+              enemies.remove(enemy);
+              continue;
+            }
             
             if (enemy.getX() < -150) {
               
@@ -248,13 +248,8 @@ public class Board extends JPanel implements ComponentListener {
   }
   
   private void drawEnemies(Graphics g) {
-
-    iter = enemies.iterator();
     
-    while (iter.hasNext()) {
-      Enemy tmp = iter.next();
-      g.drawImage(tmp.getCurrentSpriteImage(), tmp.getX(), tmp.getY(), null);
-    }
+    enemies.stream().forEach(e -> g.drawImage(e.getCurrentSpriteImage(), e.getX(), e.getY(), null));
   }
 
   private void drawHUD(Graphics g) {
@@ -397,27 +392,27 @@ public class Board extends JPanel implements ComponentListener {
     
     player.getWeapons().stream().forEach(w -> collidables.add(w));
     
-    Rectangle r2 = enemy.getBounds();
-    BufferedImage b2 = enemy.getBufferedImage();
+    Rectangle enemyRectangle = enemy.getBounds();
+    BufferedImage enemyBufferedImage = enemy.getBufferedImage();
 
     collidables.forEach(c -> {
     
-      Rectangle r1 = c.getBounds();
-      BufferedImage b1 = c.getBufferedImage();
+      Rectangle collidableRectangle = c.getBounds();
+      BufferedImage collidableBufferedImage = c.getBufferedImage();
       
-      if (r1.intersects(r2)) {
+      if (collidableRectangle.intersects(enemyRectangle)) {
   
-        Rectangle r = r1.intersection(r2);
+        Rectangle intersectionRectangle = collidableRectangle.intersection(enemyRectangle);
   
-        int firstI = (int) (r.getMinX() - r1.getMinX());
-        int firstJ = (int) (r.getMinY() - r1.getMinY());
-        int bp1XHelper = (int) (r1.getMinX() - r2.getMinX());
-        int bp1YHelper = (int) (r1.getMinY() - r2.getMinY());
+        int firstI = (int) (intersectionRectangle.getMinX() - collidableRectangle.getMinX());
+        int firstJ = (int) (intersectionRectangle.getMinY() - collidableRectangle.getMinY());
+        int bp1XHelper = (int) (collidableRectangle.getMinX() - enemyRectangle.getMinX());
+        int bp1YHelper = (int) (collidableRectangle.getMinY() - enemyRectangle.getMinY());
   
-        for (int i = firstI; i < r.getWidth() + firstI; i++) {
-          for (int j = firstJ; j < r.getHeight() + firstJ; j++) {
+        for (int i = firstI; i < intersectionRectangle.getWidth() + firstI; i++) {
+          for (int j = firstJ; j < intersectionRectangle.getHeight() + firstJ; j++) {
   
-            if ((b1.getRGB(i, j) & 0xFF000000) != 0x00 && (b2.getRGB(i + bp1XHelper, j + bp1YHelper) & 0xFF000000) != 0x00) {
+            if ((collidableBufferedImage.getRGB(i, j) & 0xFF000000) != 0x00 && (enemyBufferedImage.getRGB(i + bp1XHelper, j + bp1YHelper) & 0xFF000000) != 0x00) {
   
               enemy.die();
   
@@ -426,8 +421,8 @@ public class Board extends JPanel implements ComponentListener {
                 enemy.markDead(true);
                 score++;
               }
-  
-              if (!player.isInvicible()) {
+              
+              if (!player.isInvicible() && c.isDamageable()) {
   
                 player.changeLives(-1);
                 if (!player.isGodMode()) player.setInvulnDur(InvalnerableDuration);

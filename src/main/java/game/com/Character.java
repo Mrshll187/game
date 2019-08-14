@@ -106,4 +106,9 @@ public class Character implements Collidable{
     
     return bi;
   }
+
+  @Override
+  public boolean isDamageable() {
+    return true;
+  }
 }

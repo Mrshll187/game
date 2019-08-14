@@ -6,7 +6,7 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import game.com.util.ResourceManager;
 
-public class Weapon implements Collidable{
+public class Weapon implements Collidable {
 
   public int x;
   public int y;
@@ -67,5 +67,10 @@ public class Weapon implements Collidable{
     g.dispose();
     
     return bi;
+  }
+
+  @Override
+  public boolean isDamageable() {
+    return false;
   }
 }
