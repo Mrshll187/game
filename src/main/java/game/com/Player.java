@@ -217,17 +217,17 @@ public class Player extends Character {
   
   private void playFiringSound() {
 
-    if (gunFireClip.isActive()) {
+    try {
       
-      //TODO WOorking here last :: Try to figure out how to start sound effect on time
-      gunFireClip.flush();
-      gunFireClip.start();
-      
-      return;
+      Clip x = AudioSystem.getClip();
+      x.open(AudioSystem.getAudioInputStream(ResourceManager.getResourceByName("miniGun.wav")));
+      x.start();
     }
-    
-    gunFireClip.start();
-    gunFireClip.setFramePosition(0);
+    catch(Exception e) {
+      
+      System.out.println("Failure playing gun sounds" + e.getMessage());
+      System.exit(1);
+    } 
   }
   
   public int getxAxisWeaponOffset() {
@@ -241,7 +241,10 @@ public class Player extends Character {
   public void jump(boolean value) throws Exception {
     
     if (value) {
-      if (!jumping && !peaked) landYAxis = getY();
+      
+      if (!jumping && !peaked) 
+        landYAxis = getY();
+      
       jumping = true;
     }
     else
