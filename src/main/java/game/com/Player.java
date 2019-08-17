@@ -13,6 +13,7 @@ public class Player extends Character {
   private int lives;
   private int invulnDur;
   private int fireDuration = 10;
+  
   private ArrayList<Weapon> weapons = new ArrayList<>();
   
   private boolean jumping;
@@ -32,6 +33,9 @@ public class Player extends Character {
   private Clip gunFireClip;
   
   private boolean invincible;
+  
+  private int xAxisWeaponOffset = 230;
+  private int yAxisWeaponOffset = 130;
 
   public Player() throws Exception {
     this(0, 0, false);
@@ -173,8 +177,8 @@ public class Player extends Character {
     playFiringSound();
 
     Weapon weapon = new Weapon();
-    weapon.setX(x + 230);
-    weapon.setY(y + 130);
+    weapon.setX(x + getxAxisWeaponOffset());
+    weapon.setY(y + getyAxisWeaponOffset());
     
     weapons.add(weapon);
   }
@@ -226,6 +230,14 @@ public class Player extends Character {
     gunFireClip.setFramePosition(0);
   }
   
+  public int getxAxisWeaponOffset() {
+    return xAxisWeaponOffset;
+  }
+
+  public int getyAxisWeaponOffset() {
+    return yAxisWeaponOffset;
+  }
+
   public void jump(boolean value) throws Exception {
     
     if (value) {

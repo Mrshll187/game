@@ -22,6 +22,12 @@ public class Terrain {
     w = sprite.getWidth(null);
     h = sprite.getHeight(null);
   }
+  
+  public Terrain(int pace, String resourceName, float scaleSprite) throws IOException {
+    
+    this(pace, resourceName);
+    this.scaleSprite(scaleSprite);
+  }
 
   public Image getSprite() {
     return sprite;
