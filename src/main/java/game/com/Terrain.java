@@ -6,7 +6,7 @@ import game.com.util.ResourceManager;
 
 public class Terrain {
   
-  private int initX;
+  private int x;
   private int w;
   private int h;
   private int pace;
@@ -14,7 +14,7 @@ public class Terrain {
 
   public Terrain(int pace, String resourceName) throws IOException {
     
-    this.initX = 0;
+    this.x = 0;
     this.pace = pace;
     
     sprite = ResourceManager.getImage(resourceName);
@@ -33,15 +33,16 @@ public class Terrain {
     return sprite;
   }
 
-  public int getInitX() {
-    return initX;
+  public int getX() {
+    return x;
   }
 
   public void nextPos() {
-    initX += (pace);
-    if (initX < (-w)) {
-      initX += w;
-    }
+    
+    x += (pace);
+    
+    if (x < (-w))
+      x += w;
   }
 
   public int getH() {

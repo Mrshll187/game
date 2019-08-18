@@ -11,7 +11,6 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -157,12 +156,12 @@ public class Board extends JPanel implements ComponentListener {
   }
 
   private void drawCloud(Graphics g) {
-    for (int x = cloud.getInitX(); x < frameWidth; x += cloud.getW())
+    for (int x = cloud.getX(); x < frameWidth; x += cloud.getW())
       g.drawImage(cloud.getSprite(), x, (int) (frameHeight * 0.1), null);
   }
 
   private void drawMountain(Graphics g) {
-    for (int x = mountain.getInitX(); x < frameWidth; x += mountain.getW())
+    for (int x = mountain.getX(); x < frameWidth; x += mountain.getW())
       g.drawImage(mountain.getSprite(), x, MOUNTAIN_HEIGHT, null);
   }
 
@@ -172,13 +171,13 @@ public class Board extends JPanel implements ComponentListener {
 
       if (y == LAND_HEIGHT) {
 
-        for (int x = ground.getInitX(); x < frameWidth; x += ground.getW()) {
+        for (int x = ground.getX(); x < frameWidth; x += ground.getW()) {
           g.drawImage(ground.getSprite(), x, y, null);
         }
       }
       else {
 
-        for (int x = ground.getInitX(); x < frameWidth; x += ground2.getW()) {
+        for (int x = ground.getX(); x < frameWidth; x += ground2.getW()) {
           g.drawImage(ground2.getSprite(), x, y, null);
         }
       }
@@ -191,12 +190,12 @@ public class Board extends JPanel implements ComponentListener {
 
       if (y == WATER_HEIGHT) {
 
-        for (int x = water.getInitX(); x < frameWidth; x += water.getW())
+        for (int x = water.getX(); x < frameWidth; x += water.getW())
           g.drawImage(water.getSprite(), x, y, null);
       }
       else {
 
-        for (int x = water.getInitX(); x < frameWidth; x += water2.getW())
+        for (int x = water.getX(); x < frameWidth; x += water2.getW())
           g.drawImage(water2.getSprite(), x, y, null);
       }
     }
@@ -251,15 +250,21 @@ public class Board extends JPanel implements ComponentListener {
 
     g.setColor(Color.WHITE);
     g.fillRect(0, 0, frameWidth, frameHeight);
-    Image gameOver = new ImageIcon(this.getClass().getResource("Logo.png")).getImage();
-    g.drawImage(gameOver, (frameWidth / 2) - (gameOver.getWidth(null) / 2),
-        (frameHeight / 2) - (gameOver.getHeight(null) / 2), null);
+    
+//    Image gameOver = new ImageIcon(this.getClass().getResource("Logo.png")).getImage();
+//    
+//    g.drawImage(gameOver, (frameWidth / 2) - (gameOver.getWidth(null) / 2),
+//        (frameHeight / 2) - (gameOver.getHeight(null) / 2), null);
+    
     Font largeScoreFont = new Font("Calibri", Font.BOLD, 100);
     metric = g.getFontMetrics(scoreFont);
+    
     FontMetrics metric2 = g.getFontMetrics(scoreFont);
     scoreWidth = metric2.stringWidth(String.format("%d", score));
-    String message1 = "You fucked up!";
+    
+    String message1 = "You're fucking dead!";
     String message2 = "Press space to restart";
+    
     g.setColor(Color.BLACK);
     g.setFont(largeScoreFont);
     g.drawString(String.format("%d", score), frameWidth / 2 - scoreWidth, 200);
@@ -321,10 +326,18 @@ public class Board extends JPanel implements ComponentListener {
     }
     else if (key == KeyEvent.VK_ESCAPE) {
 
+      timer.stop();
+      player.setStaticImage();
+      
       int x = JOptionPane.showConfirmDialog(null, "Exit Game?", "Notice", JOptionPane.YES_NO_OPTION);
       
       if (x == JOptionPane.YES_OPTION)
         System.exit(0);
+      else {
+        
+        timer.start();
+        //player.setWalkingImage();
+      }
     }
   }
 

@@ -36,7 +36,7 @@ public class Character implements Collidable{
     else
       currentFrame++;
   }
-
+  
   public int getX() {
     return x;
   }

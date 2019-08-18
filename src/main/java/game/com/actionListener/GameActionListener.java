@@ -40,24 +40,10 @@ public class GameActionListener implements ActionListener {
       player.getWeapons().stream().forEach(w -> w.incrementX(30));
       
       List<Enemy> enemies = board.getEnemies();
+      
       enemies.removeIf(Enemy::isDead);
-
-      for (Enemy enemy : enemies) {
-
-        if (enemy.isDead()) {
-          enemies.remove(enemy);
-          continue;
-        }
-
-        if (enemy.getX() < -150) {
-
-          enemies.remove(enemy);
-          break;
-        }
-
-        enemy.nextFrame();
-        enemy.updatePos();
-      }
+      enemies.removeIf(Enemy::hasExceededBounds);
+      enemies.forEach(enemy -> enemy.updateFrameAndPosition());
 
       player.checkInvulnerability();
       player.checkFiringDuration();
@@ -101,7 +87,10 @@ public class GameActionListener implements ActionListener {
           for (int i = firstI; i < intersectionRectangle.getWidth() + firstI; i++) {
             for (int j = firstJ; j < intersectionRectangle.getHeight() + firstJ; j++) {
     
-              if ((collidableBufferedImage.getRGB(i, j) & 0xFF000000) != 0x00 && (enemyBufferedImage.getRGB(i + bp1XHelper, j + bp1YHelper) & 0xFF000000) != 0x00) {
+              int color = collidableBufferedImage.getRGB(i, j) & 0xFF000000;
+              int enemyColor = enemyBufferedImage.getRGB(i + bp1XHelper, j + bp1YHelper) & 0xFF000000;
+              
+              if (color != 0 && enemyColor != 0) {
     
                 enemy.die();
     
@@ -114,7 +103,10 @@ public class GameActionListener implements ActionListener {
                 if (!player.isInvicible() && c.isDamageable()) {
     
                   player.changeLives(-1);
-                  if (!player.isGodMode()) player.setInvulnDur(board.getInvalnerableDuration());
+                  
+                  if (!player.isGodMode()) 
+                    player.setInvulnDur(board.getInvalnerableDuration());
+                  
                   break;
                 }
                 

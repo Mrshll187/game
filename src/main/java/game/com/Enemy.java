@@ -64,10 +64,19 @@ public class Enemy extends Character {
     return dead;
   }
   
+  public boolean hasExceededBounds() {
+    return y < -150;
+  }
+  
   public void updatePos() {
     incrementX(speed);
   }
 
+  public void updateFrameAndPosition() {
+    updatePos();
+    nextFrame();
+  }
+  
   public void die() {    
     explode();
     playDamageSound();

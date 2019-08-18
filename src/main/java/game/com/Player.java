@@ -92,6 +92,14 @@ public class Player extends Character {
     velocity = 40;
   }
 
+  public void setStaticImage() {
+    setSpriteImageIndex(0, jumpSprite);
+  }
+  
+  public void setWalkingImage() {
+    setSpriteImageIndex(0, forwardWalking);
+  }
+  
   public void setDx(int dx) {
     this.dx = dx;
   }
