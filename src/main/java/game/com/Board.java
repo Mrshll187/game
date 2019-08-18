@@ -263,11 +263,10 @@ public class Board extends JPanel implements ComponentListener {
     scoreWidth = metric2.stringWidth(String.format("%d", score));
     
     String message1 = "You're fucking dead!";
-    String message2 = "Press space to restart";
+    String message2 = "Your Score " + String.format("%d", score);
     
     g.setColor(Color.BLACK);
     g.setFont(largeScoreFont);
-    g.drawString(String.format("%d", score), frameWidth / 2 - scoreWidth, 200);
     g.setFont(scoreFont);
     g.drawString(message1, frameWidth / 2 - metric.stringWidth(message1) / 2, 100);
     g.drawString(message2, frameWidth / 2 - metric.stringWidth(message2) / 2, frameHeight - 100);
