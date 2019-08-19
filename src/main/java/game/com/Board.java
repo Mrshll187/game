@@ -83,7 +83,7 @@ public class Board extends JPanel implements ComponentListener {
     frameHeight = getHeight();
 
     spawnInterval = 0;
-    enemySpeed = -7;
+    enemySpeed = -4;
     numEnemies = 500;
     enemies = new ArrayList<>();
 

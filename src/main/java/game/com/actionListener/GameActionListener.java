@@ -49,13 +49,13 @@ public class GameActionListener implements ActionListener {
       player.checkFiringDuration();
     }
 
-    collisionHelper(board);
+    collisionDetector(board);
     
     board.repaint();
     board.incrementSpawnInterval();
   }
   
-  public static void collisionHelper(Board board) {
+  public static void collisionDetector(Board board) {
     
     List<Enemy> enemies = board.getEnemies();
     Player player = board.getPlayer();
@@ -70,10 +70,10 @@ public class GameActionListener implements ActionListener {
       Rectangle enemyRectangle = enemy.getBounds();
       BufferedImage enemyBufferedImage = enemy.getBufferedImage();
   
-      collidables.forEach(c -> {
+      collidables.forEach(collidable -> {
       
-        Rectangle collidableRectangle = c.getBounds();
-        BufferedImage collidableBufferedImage = c.getBufferedImage();
+        Rectangle collidableRectangle = collidable.getBounds();
+        BufferedImage collidableBufferedImage = collidable.getBufferedImage();
         
         if (collidableRectangle.intersects(enemyRectangle)) {
     
@@ -92,6 +92,9 @@ public class GameActionListener implements ActionListener {
               
               if (color != 0 && enemyColor != 0) {
     
+                if(collidable instanceof Player)
+                  board.getPlayer().playHurtSound();
+                
                 enemy.die();
     
                 if (!enemy.isMarkedDead()) {
@@ -100,7 +103,7 @@ public class GameActionListener implements ActionListener {
                   board.incrementScore();
                 }
                 
-                if (!player.isInvicible() && c.isDamageable()) {
+                if (!player.isInvicible() && collidable.isDamageable()) {
     
                   player.changeLives(-1);
                   
@@ -110,7 +113,7 @@ public class GameActionListener implements ActionListener {
                   break;
                 }
                 
-                player.getWeapons().remove(c);
+                player.getWeapons().remove(collidable);
               }
             }
           }

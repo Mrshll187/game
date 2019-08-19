@@ -29,8 +29,8 @@ public class Player extends Character {
   private Image forwardWalking;
   private boolean backPeddling;
   
-  private Clip clip;
-  private Clip gunFireClip;
+  private Clip jumpSound;
+  private Clip hurtSound;
   
   private boolean invincible;
   
@@ -76,11 +76,11 @@ public class Player extends Character {
     fireSprite = ResourceManager.getImage("mechFire.png");
     reverseWalking = ResourceManager.getImage("reverseWalking.gif");
     
-    clip = AudioSystem.getClip();
-    clip.open(AudioSystem.getAudioInputStream(ResourceManager.getResourceByName("Jump.wav")));
+    jumpSound = AudioSystem.getClip();
+    jumpSound.open(AudioSystem.getAudioInputStream(ResourceManager.getResourceByName("jump.wav")));
     
-    gunFireClip = AudioSystem.getClip();
-    gunFireClip.open(AudioSystem.getAudioInputStream(ResourceManager.getResourceByName("miniGun.wav")));
+    hurtSound = AudioSystem.getClip();
+    hurtSound.open(AudioSystem.getAudioInputStream(ResourceManager.getResourceByName("hurt.wav")));
     
     setCurrentFrame(0);
     
@@ -142,8 +142,8 @@ public class Player extends Character {
     
     if (jumping && !peaked) {
       if (getY() == landYAxis) {
-        clip.start();
-        clip.setFramePosition(0);
+        jumpSound.start();
+        jumpSound.setFramePosition(0);
       }
       if (velocity > 0) {
         decrementY(velocity);
@@ -228,7 +228,22 @@ public class Player extends Character {
     try {
       
       Clip x = AudioSystem.getClip();
-      x.open(AudioSystem.getAudioInputStream(ResourceManager.getResourceByName("miniGun.wav")));
+      x.open(AudioSystem.getAudioInputStream(ResourceManager.getResourceByName("rocket.wav")));
+      x.start();
+    }
+    catch(Exception e) {
+      
+      System.out.println("Failure playing gun sounds" + e.getMessage());
+      System.exit(1);
+    } 
+  }
+  
+  public void playHurtSound() {
+
+    try {
+      
+      Clip x = AudioSystem.getClip();
+      x.open(AudioSystem.getAudioInputStream(ResourceManager.getResourceByName("hurt.wav")));
       x.start();
     }
     catch(Exception e) {
