@@ -11,6 +11,8 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -43,6 +45,8 @@ public class Board extends JPanel implements ComponentListener {
   private Font scoreFont;
   private FontMetrics metric;
 
+  private Clip backgroundMusicClip;
+  
   private List<Terrain> terrains = new ArrayList<>();
 
   private Terrain cloud;
@@ -99,6 +103,7 @@ public class Board extends JPanel implements ComponentListener {
     timer.start();
 
     playingGame = true;
+    startGameMusic();
   }
 
   private void initialize() {
@@ -114,6 +119,9 @@ public class Board extends JPanel implements ComponentListener {
       water2 = new Terrain(-15, "liquidWater.png");
       mountain = new Terrain(-1, "Mountains.png");
       sun = new Terrain(0, "screamingSun.gif");
+      
+      backgroundMusicClip = AudioSystem.getClip();
+      backgroundMusicClip.open(AudioSystem.getAudioInputStream(ResourceManager.getResourceByName("bgm.wav")));
     }
     catch (Exception e) {
 
@@ -121,7 +129,7 @@ public class Board extends JPanel implements ComponentListener {
       System.exit(1);
     }
   }
-
+  
   @Override
   public void paintComponent(Graphics g) {
 
@@ -210,7 +218,6 @@ public class Board extends JPanel implements ComponentListener {
   }
 
   private void drawWeapons(Graphics g) {
-
     player.getWeapons().stream().forEach(w -> g.drawImage(w.getImage(), w.getX(), w.getY(), null));
   }
 
@@ -246,8 +253,21 @@ public class Board extends JPanel implements ComponentListener {
     }
   }
 
+  public void stopGameMusic() {
+    
+    backgroundMusicClip.stop();
+  }
+
+  public void startGameMusic() {
+    
+    backgroundMusicClip.loop(Clip.LOOP_CONTINUOUSLY);
+    backgroundMusicClip.start();
+  }
+  
   private void gameOver(Graphics g) {
 
+    stopGameMusic();
+    
     g.setColor(Color.WHITE);
     g.fillRect(0, 0, frameWidth, frameHeight);
     
@@ -327,15 +347,15 @@ public class Board extends JPanel implements ComponentListener {
 
       timer.stop();
       player.setStaticImage();
+      stopGameMusic();
       
-      int x = JOptionPane.showConfirmDialog(null, "Exit Game?", "Notice", JOptionPane.YES_NO_OPTION);
+      int x = JOptionPane.showConfirmDialog(null, "Exit Game?", "Welp...", JOptionPane.YES_NO_OPTION);
       
       if (x == JOptionPane.YES_OPTION)
         System.exit(0);
       else {
-        
         timer.start();
-        //player.setWalkingImage();
+        startGameMusic();
       }
     }
   }
@@ -358,10 +378,8 @@ public class Board extends JPanel implements ComponentListener {
 
     if (enemies.size() < numEnemies) {
 
-      if (genEnemyChance() > 7) {
-        Enemy enemy = new Enemy(frameWidth + 150, LAND_HEIGHT - 100 + 5, enemySpeed);
-        enemies.add(enemy);
-      }
+      if (genEnemyChance() > 7)
+        enemies.add(new Enemy(frameWidth + 250, LAND_HEIGHT - 150, enemySpeed));
     }
   }
 
@@ -371,6 +389,8 @@ public class Board extends JPanel implements ComponentListener {
 
   public void restartGame() {
 
+    startGameMusic();
+    
     player.setX((int) (0.15 * frameWidth));
     player.setLives(3);
     enemies.clear();

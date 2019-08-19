@@ -9,8 +9,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -35,7 +33,6 @@ public class Game implements ActionListener, KeyListener {
   private Board board;
   private Menu menu;
   private Timer timer;
-  private Clip backgroundMusicClip;
 
   public Game() {
 
@@ -62,10 +59,6 @@ public class Game implements ActionListener, KeyListener {
     });
 
     mainFrame.setContentPane(contentPanel);
-
-    backgroundMusicClip.loop(Clip.LOOP_CONTINUOUSLY);
-    backgroundMusicClip.start();
-    
     mainFrame.setVisible(true);
   }
 
@@ -73,9 +66,6 @@ public class Game implements ActionListener, KeyListener {
     
     try {
     
-      backgroundMusicClip = AudioSystem.getClip();
-      backgroundMusicClip.open(AudioSystem.getAudioInputStream(ResourceManager.getResourceByName("bgm.wav")));
-      
       contentPanel = createContentPane();
     }
     catch(Exception e) {
@@ -170,6 +160,7 @@ public class Game implements ActionListener, KeyListener {
         board.getTimer().stop();
         timer.start();
         pauseButton.setVisible(true);
+      
       }
       else {
 

@@ -35,7 +35,9 @@ public class Enemy extends Character {
     
     try {
       
-      image = ResourceManager.getImage("smallZombieLeft.gif");
+      Image imageX = ResourceManager.getImage("cactus.png");
+      image = ResourceManager.resize(ResourceManager.toBufferedImage(imageX), 150, 150);
+      
       explodeImage = ResourceManager.getImage("explode.gif");
       
       damageClip = AudioSystem.getClip();
