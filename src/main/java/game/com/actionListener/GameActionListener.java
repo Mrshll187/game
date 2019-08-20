@@ -81,6 +81,7 @@ public class GameActionListener implements ActionListener {
     
           int firstI = (int) (intersectionRectangle.getMinX() - collidableRectangle.getMinX());
           int firstJ = (int) (intersectionRectangle.getMinY() - collidableRectangle.getMinY());
+          
           int bp1XHelper = (int) (collidableRectangle.getMinX() - enemyRectangle.getMinX());
           int bp1YHelper = (int) (collidableRectangle.getMinY() - enemyRectangle.getMinY());
     

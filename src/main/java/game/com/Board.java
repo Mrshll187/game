@@ -63,10 +63,6 @@ public class Board extends JPanel implements ComponentListener {
 
   private Image lifeIndicator;
 
-  public Timer getTimer() {
-    return timer;
-  }
-
   public Board() {
 
     initialize();
@@ -399,6 +395,10 @@ public class Board extends JPanel implements ComponentListener {
     timer.start();
   }
 
+  public Timer getTimer() {
+    return timer;
+  }
+  
   public Player getPlayer() {
     return player;
   }

@@ -7,7 +7,7 @@ import java.awt.image.BufferedImage;
 
 public class Character implements Collidable{
 
-  private int frames = 11;
+  private int frames;
   protected int x;
   protected int y;
   private int currentFrame;
