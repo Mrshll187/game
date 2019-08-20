@@ -26,15 +26,15 @@ public class Board extends JPanel implements ComponentListener {
   private Random random = new Random();
 
   private final int enemySpawnInterval = 35;
-  private final int InvalnerableDuration = 30;
+  private final int invalnerableDuration = 30;
 
   private boolean playingGame;
   private int frameWidth;
   private int frameHeight;
 
-  private int LAND_HEIGHT = (int) (0.8 * frameHeight);
-  private int WATER_HEIGHT = (int) (0.95 * frameHeight);
-  private int MOUNTAIN_HEIGHT = (int) (0.82 * frameWidth);
+  private int landHeight = (int) (0.8 * frameHeight);
+  private int waterHeight = (int) (0.95 * frameHeight);
+  private int mountainHeight = (int) (0.82 * frameWidth);
 
   private int enemySpeed;
   private int numEnemies;
@@ -166,14 +166,14 @@ public class Board extends JPanel implements ComponentListener {
 
   private void drawMountain(Graphics g) {
     for (int x = mountain.getX(); x < frameWidth; x += mountain.getW())
-      g.drawImage(mountain.getSprite(), x, MOUNTAIN_HEIGHT, null);
+      g.drawImage(mountain.getSprite(), x, mountainHeight, null);
   }
 
   private void drawLand(Graphics g) {
 
-    for (int y = LAND_HEIGHT; y < frameHeight; y += ground.getH()) {
+    for (int y = landHeight; y < frameHeight; y += ground.getH()) {
 
-      if (y == LAND_HEIGHT) {
+      if (y == landHeight) {
 
         for (int x = ground.getX(); x < frameWidth; x += ground.getW()) {
           g.drawImage(ground.getSprite(), x, y, null);
@@ -190,9 +190,9 @@ public class Board extends JPanel implements ComponentListener {
 
   private void drawWater(Graphics g) {
 
-    for (int y = WATER_HEIGHT; y < frameHeight; y += water.getH()) {
+    for (int y = waterHeight; y < frameHeight; y += water.getH()) {
 
-      if (y == WATER_HEIGHT) {
+      if (y == waterHeight) {
 
         for (int x = water.getX(); x < frameWidth; x += water.getW())
           g.drawImage(water.getSprite(), x, y, null);
@@ -241,7 +241,7 @@ public class Board extends JPanel implements ComponentListener {
       timer.stop();
       repaint();
 
-      if (JOptionPane.showConfirmDialog(null, "Exit Game?", "Notice",
+      if (JOptionPane.showConfirmDialog(null, "Exit Game?", "Gotta go!",
           JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
         System.exit(0);
       else
@@ -295,11 +295,11 @@ public class Board extends JPanel implements ComponentListener {
     frameHeight = getHeight();
     frameWidth = getWidth();
 
-    LAND_HEIGHT = (int) (0.85 * frameHeight);
-    WATER_HEIGHT = (int) (0.92 * frameHeight);
-    MOUNTAIN_HEIGHT = (LAND_HEIGHT - 500);
+    landHeight = (int) (0.85 * frameHeight);
+    waterHeight = (int) (0.92 * frameHeight);
+    mountainHeight = (landHeight - 500);
 
-    enemies.iterator().forEachRemaining(enemy -> enemy.setY(LAND_HEIGHT - 81 + 5));
+    enemies.iterator().forEachRemaining(enemy -> enemy.setY(landHeight - 81 + 5));
 
     timer.start();
   }
@@ -374,8 +374,9 @@ public class Board extends JPanel implements ComponentListener {
 
     if (enemies.size() < numEnemies) {
 
-      if (genEnemyChance() > 7)
-        enemies.add(new Enemy(frameWidth + 250, LAND_HEIGHT - 150, enemySpeed));
+      if (genEnemyChance() > 7) {
+        enemies.add(new Enemy(frameWidth + 250, landHeight - 150, enemySpeed));
+      }
     }
   }
 
@@ -452,7 +453,7 @@ public class Board extends JPanel implements ComponentListener {
   }
 
   public int getInvalnerableDuration() {
-    return InvalnerableDuration;
+    return invalnerableDuration;
   }
 
   public List<Terrain> getTerrains() {

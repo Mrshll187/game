@@ -2,6 +2,7 @@ package game.com;
 
 import java.awt.Image;
 import java.util.ArrayList;
+import java.util.List;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import game.com.util.ResourceManager;
@@ -14,7 +15,7 @@ public class Player extends Character {
   private int invulnDur;
   private int fireDuration = 10;
   
-  private ArrayList<Weapon> weapons = new ArrayList<>();
+  private List<Weapon> weapons = new ArrayList<>();
   
   private boolean jumping;
   private boolean firing;
@@ -81,7 +82,7 @@ public class Player extends Character {
     
     hurtSound = AudioSystem.getClip();
     hurtSound.open(AudioSystem.getAudioInputStream(ResourceManager.getResourceByName("hurt.wav")));
-    
+        
     setCurrentFrame(0);
     
     jumping = false;
@@ -191,7 +192,7 @@ public class Player extends Character {
     weapons.add(weapon);
   }
   
-  public ArrayList<Weapon> getWeapons(){
+  public List<Weapon> getWeapons(){
     return weapons;
   }
   
@@ -227,9 +228,9 @@ public class Player extends Character {
 
     try {
       
-      Clip x = AudioSystem.getClip();
-      x.open(AudioSystem.getAudioInputStream(ResourceManager.getResourceByName("rocket.wav")));
-      x.start();
+      Clip rocket = AudioSystem.getClip();
+      rocket.open(AudioSystem.getAudioInputStream(ResourceManager.getResourceByName("hadouken.wav")));
+      rocket.start();
     }
     catch(Exception e) {
       

@@ -1,8 +1,6 @@
 package game.com;
 
 import java.awt.Image;
-import java.awt.image.BufferedImage;
-import java.util.List;
 import java.util.logging.Logger;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -23,8 +21,8 @@ public class Enemy extends Character {
     
     loadResources();
     
-    setX(x);
-    setY(y);
+    super.x = x;
+    super.y = y;
     setFrames(1);
     this.speed = speed;
     
@@ -41,8 +39,6 @@ public class Enemy extends Character {
       image = ResourceManager.resize(ResourceManager.toBufferedImage(imageX), 150, 150);
       
       explodeImage = ResourceManager.getImage("explode.gif");
-      List<BufferedImage> frames = ResourceManager.getGifFrames("explode.gif");
-      setFrames(frames.size());
       
       damageClip = AudioSystem.getClip();
       damageClip.open(AudioSystem.getAudioInputStream(ResourceManager.getResourceByName("explode.wav")));
